@@ -2,9 +2,10 @@ package com.github.wangxuxin.rotation;
 
 import android.app.ActivityManager;
 import android.app.IntentService;
-import android.content.Intent;
 import android.content.Context;
+import android.content.Intent;
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -16,6 +17,8 @@ import java.util.ArrayList;
  * helper methods.
  */
 public class RotationIntentService extends IntentService {
+    static MyOrientoinListener mol=null;
+
     private static final String SERVICE_NAME = "com.github.wangxuxin.rotation.RotationIntentService";
     // TODO: Rename actions, choose action names that describe tasks that this
     // IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS
@@ -47,7 +50,13 @@ public class RotationIntentService extends IntentService {
         return false;
     }
 
-    protected static void stopService(Context context){
+    protected static void stopService(Context context) {
+        Log.d("wxxDebug","stopservice");
+        if (mol != null) {
+            mol.disable();
+            mol=null;
+            Log.d("wxxDebug","disablemol");
+        }
         Intent intent = new Intent(context, RotationIntentService.class);
         context.stopService(intent);
     }
@@ -60,7 +69,7 @@ public class RotationIntentService extends IntentService {
      */
     // TODO: Customize helper method
     public static void startRotation(Context context) {
-        if(isServiceRunning(context)){
+        if (isServiceRunning(context)||mol!=null) {
             throw new UnsupportedOperationException("service already started");
         }
         Intent intent = new Intent(context, RotationIntentService.class);
@@ -107,13 +116,17 @@ public class RotationIntentService extends IntentService {
      */
     private void handleStartAction() {
         // TODO: Handle action Foo
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                
-            }
-        });
-        thread.start();
+//        Thread thread = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                mol = new MyOrientoinListener(getApplicationContext());
+//                mol.enable();
+//            }
+//        });
+//        thread.start();
+
+        mol = new MyOrientoinListener(getApplicationContext());
+        mol.enable();
     }
 
     /**
