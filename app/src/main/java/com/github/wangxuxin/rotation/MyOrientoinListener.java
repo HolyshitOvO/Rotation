@@ -9,9 +9,12 @@ import android.view.OrientationEventListener;
 import static android.content.ContentValues.TAG;
 
 public class MyOrientoinListener extends OrientationEventListener {
-    boolean isDebug=false;
+    boolean isDebug=true;
     int changeType = 1;//横屏的检测方式
     Context context;
+    Long[] changeState = {0L,1000L};
+    /*0:开始时间 1:间隔时间 2:*/
+
     public MyOrientoinListener(Context context) {
         super(context);
         this.context=context;
@@ -25,6 +28,24 @@ public class MyOrientoinListener extends OrientationEventListener {
     @Override
     public void onOrientationChanged(int orientation) {
         logcat(TAG, "orention" + orientation);
+        long time=System.currentTimeMillis();
+        if(time-changeState[0]>500){
+            if(time-changeState[1]>250){
+                changeState[0]=changeState[1]=time;
+                return;
+            }else {
+                changeState[0]=changeState[1]=time;
+                //
+            }
+        }else {
+            if(time-changeState[1]>250){
+                changeState[0]=changeState[1]=time;
+                return;
+            }else {
+                changeState[1]=time;
+                return;
+            }
+        }
         int screenOrientation = context.getResources().getConfiguration().orientation;
         if (((orientation >= 0) && (orientation < 45)) || (orientation > 315)) {//设置竖屏
             if(changeType==0){
@@ -52,6 +73,10 @@ public class MyOrientoinListener extends OrientationEventListener {
                 Settings.System.putInt(context.getContentResolver(), Settings.System.USER_ROTATION, 2);
             }
         }
+    }
+
+    public static long getUnixStamp(){
+        return System.currentTimeMillis()/1000;
     }
 
     void logcat(String tag,String str){
