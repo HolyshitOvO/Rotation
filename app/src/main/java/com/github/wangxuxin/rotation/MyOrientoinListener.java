@@ -9,10 +9,10 @@ import android.view.OrientationEventListener;
 import static android.content.ContentValues.TAG;
 
 public class MyOrientoinListener extends OrientationEventListener {
-    boolean isDebug=true;
-    int changeType = 1;//横屏的检测方式
-    Context context;
-    Long[] changeState = {0L,1000L};
+    private final boolean isDebug=true;
+    private final int changeType = 1;//横屏的检测方式
+    private final Context context;
+    private final Long[] changeState = {0L,1000L};
     /*0:开始时间 1:间隔时间 2:*/
 
     public MyOrientoinListener(Context context) {
